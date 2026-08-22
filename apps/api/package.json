@@ -4,10 +4,10 @@
   "version": "1.0.0",
   "type": "module",
   "scripts": {
-    "dev": "node --watch src/server.js",
-    "start": "node src/server.js",
+    "dev": "node --watch src/start.js",
+    "start": "node src/start.js",
     "seed": "node src/scripts/createInvitations.js",
-    "check": "node --check src/server.js && node --check src/app.js"
+    "check": "node --check src/start.js && node --check src/expressApp.js"
   },
   "dependencies": {
     "cookie-parser": "^1.4.7",

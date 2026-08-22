@@ -1,4 +1,4 @@
-import { app } from '../apps/api/src/app.js'
+import { app } from '../apps/api/src/expressApp.js'
 import { validateConfig } from '../apps/api/src/config.js'
 import { connectDatabase } from '../apps/api/src/db.js'
 
