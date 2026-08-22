@@ -66,8 +66,13 @@ router.post('/password', requireAdmin, async (req, res, next) => {
     if (validationError) return res.status(400).json({ message: validationError })
 
     const admin = await Admin.findById(req.admin.id).select('+passwordHash')
-    const currentMatches = admin && await verifyPassword(currentPassword, admin.passwordHash)
-    if (!currentMatches) return res.status(401).json({ message: 'Your current password is incorrect.' })
+    if (!admin) return res.status(401).json({ message: 'Your session has expired.' })
+
+    if (!admin.mustChangePassword) {
+      const currentMatches = await verifyPassword(currentPassword, admin.passwordHash)
+      if (!currentMatches) return res.status(401).json({ message: 'Your current password is incorrect.' })
+    }
+
     if (await verifyPassword(newPassword, admin.passwordHash)) {
       return res.status(400).json({ message: 'Your new password must be different from the current password.' })
     }

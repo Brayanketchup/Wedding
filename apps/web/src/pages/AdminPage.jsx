@@ -81,7 +81,7 @@ function PasswordForm({ forced = false, onChanged, onCancel }) {
   return (
     <form className="password-form" onSubmit={submit}>
       <p>{forced ? 'Por seguridad, reemplaza tu contraseña temporal antes de entrar al dashboard.' : 'Introduce tu contraseña actual y elige una nueva.'}</p>
-      <label>Contraseña actual<input type="password" value={currentPassword} onChange={(event) => setCurrentPassword(event.target.value)} autoComplete="current-password" required /></label>
+      {!forced && <label>Contraseña actual<input type="password" value={currentPassword} onChange={(event) => setCurrentPassword(event.target.value)} autoComplete="current-password" required /></label>}
       <label>Nueva contraseña<input type="password" value={newPassword} onChange={(event) => setNewPassword(event.target.value)} autoComplete="new-password" minLength="12" maxLength="128" required /><small>Mínimo 12 caracteres</small></label>
       <label>Confirmar nueva contraseña<input type="password" value={confirmation} onChange={(event) => setConfirmation(event.target.value)} autoComplete="new-password" minLength="12" maxLength="128" required /></label>
       {error && <p className="form-error" role="alert">{error}</p>}

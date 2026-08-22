@@ -60,7 +60,7 @@ Una URL sin token o con un token que no exista muestra la pantalla de invitació
 
 No existe registro público. La primera cuenta se crea una sola vez a partir de `ADMIN_EMAIL` y `ADMIN_PASSWORD`; después, MongoDB es la fuente de identidad y cambiar esas variables no reemplaza la contraseña guardada.
 
-Las contraseñas nunca se guardan como texto legible. Se derivan con scrypt, una sal aleatoria por cuenta y comparación de tiempo constante. Cada administrador tiene `mustChangePassword`; cuando es `true`, solo puede acceder a la pantalla de actualización de contraseña.
+Las contraseñas nunca se guardan como texto legible. Se derivan con scrypt, una sal aleatoria por cuenta y comparación de tiempo constante. Cada administrador tiene `mustChangePassword`; cuando es `true`, solo puede acceder a la pantalla de actualización y crea directamente su contraseña definitiva sin volver a introducir la temporal. Los cambios voluntarios posteriores sí requieren la contraseña actual.
 
 Para autorizar otro correo, genera una cuenta con contraseña temporal:
 
