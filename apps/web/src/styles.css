@@ -137,7 +137,8 @@ h1 em { font-weight: 400; color: #7e6b4f; }
 .admin-user strong, .admin-user small { display: block; overflow: hidden; text-overflow: ellipsis; }
 .admin-user strong { font-size: 10px; }
 .admin-user small { color: #9da9a1; font-size: 8px; margin-top: 3px; }
-.logout { color: #aeb9b1; border: 0; background: none; display: flex; gap: 8px; padding: 14px 0 0; font-size: 9px; }
+.sidebar-account-actions { display: flex; flex-direction: column; align-items: flex-start; gap: 9px; padding-top: 14px; }
+.sidebar-account-actions button { color: #aeb9b1; border: 0; background: none; display: flex; align-items: center; gap: 8px; padding: 0; font-size: 9px; }
 .dashboard-content { padding: 42px clamp(25px, 4vw, 58px); min-width: 0; }
 .dashboard-header { display: flex; align-items: end; justify-content: space-between; gap: 20px; }
 .dashboard-header .eyebrow { margin: 0 0 5px; }
@@ -191,6 +192,14 @@ td code { color: #858d87; font-size: 9px; }
 .invitation-modal label input { display: block; width: 100%; border: 1px solid #d6dad5; background: #fff; padding: 14px; margin: 7px 0 18px; outline: none; font-size: 13px; text-transform: none; letter-spacing: normal; }
 .invitation-modal label input:focus { border-color: #7d9183; box-shadow: 0 0 0 3px rgba(91,116,99,.08); }
 .invitation-modal .admin-button { width: 100%; }
+.password-form > p { color: #7c847e; font-size: 11px; line-height: 1.6; margin: 14px 0 22px; }
+.password-form label { display: block; position: relative; color: #515e55; font-size: 9px; text-transform: uppercase; letter-spacing: .1em; margin-bottom: 16px; }
+.password-form label input { display: block; width: 100%; border: 1px solid #d6dad5; background: #fff; padding: 14px; margin: 7px 0 0; outline: none; font-size: 13px; text-transform: none; letter-spacing: normal; }
+.password-form label input:focus { border-color: #7d9183; box-shadow: 0 0 0 3px rgba(91,116,99,.08); }
+.password-form label small { display: block; color: #969c97; font-size: 8px; letter-spacing: .04em; text-transform: none; margin-top: 5px; }
+.password-form .admin-button { width: 100%; }
+.password-form .text-button { width: 100%; }
+.forced-logout { width: 100%; margin-top: 3px; }
 .created-invitation { text-align: center; padding-top: 18px; }
 .created-check { width: 48px; height: 48px; display: grid; place-items: center; margin: 0 auto 13px; border-radius: 50%; color: #fff; background: #4f765d; }
 .created-invitation h3 { margin: 0; color: var(--ink); font: 500 27px 'Cormorant Garamond', serif; }
@@ -202,10 +211,11 @@ td code { color: #858d87; font-size: 9px; }
   .stats-grid { grid-template-columns: repeat(2, 1fr); }
   .dashboard { grid-template-columns: 76px minmax(0, 1fr); }
   .admin-sidebar { padding: 28px 14px; align-items: center; }
-  .sidebar-title, .admin-sidebar nav button span, .admin-user div, .logout { display: none; }
+  .sidebar-title, .admin-sidebar nav button span, .admin-user div { display: none; }
   .admin-sidebar nav { margin-top: 40px; }
   .admin-sidebar nav button { justify-content: center; width: 44px; }
   .admin-user { padding-top: 18px; }
+  .sidebar-account-actions button { font-size: 0; }
 }
 
 @media (max-width: 700px) {
@@ -215,7 +225,8 @@ td code { color: #858d87; font-size: 9px; }
   .dashboard { display: block; }
   .admin-sidebar { position: relative; height: auto; flex-direction: row; justify-content: space-between; padding: 14px 20px; }
   .admin-sidebar nav, .admin-user, .sidebar-title { display: none; }
-  .logout { display: flex; padding: 0; align-items: center; }
+  .sidebar-account-actions { flex-direction: row; padding: 0; }
+  .sidebar-account-actions button { font-size: 0; }
   .dashboard-content { padding: 28px 16px; }
   .guest-toolbar { align-items: flex-start; flex-direction: column; }
   .toolbar-actions { width: 100%; }

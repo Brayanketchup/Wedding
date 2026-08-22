@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react'
-import { Check, Clock3, Copy, Heart, LogOut, Plus, RefreshCw, Search, Users, X } from 'lucide-react'
+import { Check, Clock3, Copy, Heart, KeyRound, LogOut, Plus, RefreshCw, Search, Users, X } from 'lucide-react'
 import { api } from '../lib/api'
 import BrandMark from '../components/BrandMark'
 
@@ -49,6 +49,69 @@ function Login({ onLogin }) {
   )
 }
 
+function PasswordForm({ forced = false, onChanged, onCancel }) {
+  const [currentPassword, setCurrentPassword] = useState('')
+  const [newPassword, setNewPassword] = useState('')
+  const [confirmation, setConfirmation] = useState('')
+  const [error, setError] = useState('')
+  const [busy, setBusy] = useState(false)
+
+  async function submit(event) {
+    event.preventDefault()
+    setError('')
+    if (newPassword !== confirmation) {
+      setError('Las contraseñas nuevas no coinciden.')
+      return
+    }
+
+    setBusy(true)
+    try {
+      const result = await api('/api/admin/password', {
+        method: 'POST',
+        body: JSON.stringify({ currentPassword, newPassword }),
+      })
+      onChanged(result.admin)
+    } catch (requestError) {
+      setError(requestError.message)
+    } finally {
+      setBusy(false)
+    }
+  }
+
+  return (
+    <form className="password-form" onSubmit={submit}>
+      <p>{forced ? 'Por seguridad, reemplaza tu contraseña temporal antes de entrar al dashboard.' : 'Introduce tu contraseña actual y elige una nueva.'}</p>
+      <label>Contraseña actual<input type="password" value={currentPassword} onChange={(event) => setCurrentPassword(event.target.value)} autoComplete="current-password" required /></label>
+      <label>Nueva contraseña<input type="password" value={newPassword} onChange={(event) => setNewPassword(event.target.value)} autoComplete="new-password" minLength="12" maxLength="128" required /><small>Mínimo 12 caracteres</small></label>
+      <label>Confirmar nueva contraseña<input type="password" value={confirmation} onChange={(event) => setConfirmation(event.target.value)} autoComplete="new-password" minLength="12" maxLength="128" required /></label>
+      {error && <p className="form-error" role="alert">{error}</p>}
+      <button className="admin-button" disabled={busy}>{busy ? 'Guardando…' : 'Guardar nueva contraseña'}</button>
+      {!forced && <button type="button" className="text-button" onClick={onCancel}>Cancelar</button>}
+    </form>
+  )
+}
+
+function ForcedPasswordChange({ admin, onChanged, onLogout }) {
+  return (
+    <main className="admin-login">
+      <section className="login-art">
+        <BrandMark light />
+        <div><p className="eyebrow">Cuenta protegida</p><h1>Primero,<br /><em>tu seguridad.</em></h1></div>
+        <p className="login-quote">Sesión iniciada como {admin.email}</p>
+      </section>
+      <section className="login-form-wrap">
+        <div className="login-form">
+          <div className="mobile-logo"><BrandMark /></div>
+          <p className="eyebrow">Actualización requerida</p>
+          <h2>Crea tu contraseña</h2>
+          <PasswordForm forced onChanged={onChanged} />
+          <button className="text-button forced-logout" onClick={onLogout}>Cerrar sesión</button>
+        </div>
+      </section>
+    </main>
+  )
+}
+
 const statConfig = [
   ['total', 'Invitados', <Users size={20} />],
   ['yes', 'Confirmados', <Check size={20} />],
@@ -66,7 +129,7 @@ function formatDate(date) {
   return new Intl.DateTimeFormat('es', { dateStyle: 'medium', timeStyle: 'short' }).format(new Date(date))
 }
 
-function Dashboard({ admin, onLogout }) {
+function Dashboard({ admin, onLogout, onAdminChange }) {
   const [data, setData] = useState(null)
   const [query, setQuery] = useState('')
   const [filter, setFilter] = useState('all')
@@ -78,6 +141,7 @@ function Dashboard({ admin, onLogout }) {
   const [createError, setCreateError] = useState('')
   const [creating, setCreating] = useState(false)
   const [copied, setCopied] = useState(false)
+  const [passwordOpen, setPasswordOpen] = useState(false)
 
   const load = useCallback(async () => {
     setRefreshing(true)
@@ -138,7 +202,10 @@ function Dashboard({ admin, onLogout }) {
         <div className="sidebar-title"><span>Panel de boda</span><strong>A &amp; J</strong></div>
         <nav><button className="active"><Heart size={18} /> Invitaciones</button></nav>
         <div className="admin-user"><span>{admin.email.slice(0, 1).toUpperCase()}</span><div><strong>Administración</strong><small>{admin.email}</small></div></div>
-        <button className="logout" onClick={onLogout}><LogOut size={17} /> Cerrar sesión</button>
+        <div className="sidebar-account-actions">
+          <button onClick={() => setPasswordOpen(true)}><KeyRound size={17} /> Cambiar contraseña</button>
+          <button onClick={onLogout}><LogOut size={17} /> Cerrar sesión</button>
+        </div>
       </aside>
 
       <section className="dashboard-content">
@@ -216,6 +283,17 @@ function Dashboard({ admin, onLogout }) {
           </section>
         </div>
       )}
+
+      {passwordOpen && (
+        <div className="modal-backdrop" role="presentation" onMouseDown={(event) => event.target === event.currentTarget && setPasswordOpen(false)}>
+          <section className="invitation-modal password-modal" role="dialog" aria-modal="true" aria-labelledby="password-title">
+            <button className="modal-close" onClick={() => setPasswordOpen(false)} aria-label="Cerrar"><X size={18} /></button>
+            <p className="eyebrow">Seguridad de la cuenta</p>
+            <h2 id="password-title">Cambiar contraseña</h2>
+            <PasswordForm onCancel={() => setPasswordOpen(false)} onChanged={(value) => { onAdminChange(value); setPasswordOpen(false) }} />
+          </section>
+        </div>
+      )}
     </main>
   )
 }
@@ -238,5 +316,6 @@ export default function AdminPage() {
 
   if (status === 'loading') return <div className="admin-loading"><BrandMark /><span /></div>
   if (status === 'guest') return <Login onLogin={(value) => { setAdmin(value); setStatus('authenticated') }} />
-  return <Dashboard admin={admin} onLogout={logout} />
+  if (admin.mustChangePassword) return <ForcedPasswordChange admin={admin} onChanged={setAdmin} onLogout={logout} />
+  return <Dashboard admin={admin} onLogout={logout} onAdminChange={setAdmin} />
 }

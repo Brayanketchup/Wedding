@@ -1,6 +1,7 @@
 import { app } from './expressApp.js'
 import { config, validateConfig } from './config.js'
 import { connectDatabase } from './db.js'
+import { ensureBootstrapAdmin } from './services/adminBootstrap.js'
 
 const missing = validateConfig()
 if (missing.length) {
@@ -10,6 +11,7 @@ if (missing.length) {
 
 try {
   await connectDatabase()
+  await ensureBootstrapAdmin()
   app.listen(config.port, () => {
     console.log(`Boda API listening on http://localhost:${config.port}`)
   })

@@ -12,6 +12,8 @@
     "build": "npm run build -w @boda/web",
     "start": "npm run start -w @boda/api",
     "seed": "npm run seed -w @boda/api",
+    "admin:create": "npm run admin:create -w @boda/api",
+    "admin:reset": "npm run admin:reset -w @boda/api",
     "check": "node --check api/index.js && npm run check -w @boda/web && npm run check -w @boda/api"
   },
   "devDependencies": {

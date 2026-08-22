@@ -7,7 +7,9 @@
     "dev": "node --watch src/start.js",
     "start": "node src/start.js",
     "seed": "node src/scripts/createInvitations.js",
-    "check": "node --check src/start.js && node --check src/expressApp.js"
+    "admin:create": "node src/scripts/createAdmin.js",
+    "admin:reset": "node src/scripts/resetAdminPassword.js",
+    "check": "node --check src/start.js && node --check src/expressApp.js && node --test src/utils/passwords.test.js"
   },
   "dependencies": {
     "cookie-parser": "^1.4.7",

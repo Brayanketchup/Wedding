@@ -1,6 +1,7 @@
 import { app } from '../apps/api/src/expressApp.js'
 import { validateConfig } from '../apps/api/src/config.js'
 import { connectDatabase } from '../apps/api/src/db.js'
+import { ensureBootstrapAdmin } from '../apps/api/src/services/adminBootstrap.js'
 
 let startupPromise
 
@@ -11,7 +12,10 @@ export default async function handler(req, res) {
   }
 
   try {
-    startupPromise ||= connectDatabase().catch((error) => {
+    startupPromise ||= (async () => {
+      await connectDatabase()
+      await ensureBootstrapAdmin()
+    })().catch((error) => {
       startupPromise = undefined
       throw error
     })

@@ -28,7 +28,7 @@ Necesitas Node.js 20+ y una base gratuita de [MongoDB Atlas](https://www.mongodb
 
 3. En MongoDB Atlas, crea un cluster M0, un usuario de base de datos y permite tu IP en **Network Access**. Copia la cadena de conexión en `MONGODB_URI`.
 
-4. Define `ADMIN_EMAIL`, `ADMIN_PASSWORD` y un `JWT_SECRET` aleatorio de al menos 32 caracteres en `.env`.
+4. Define `ADMIN_EMAIL`, una contraseña temporal en `ADMIN_PASSWORD` y un `JWT_SECRET` aleatorio de al menos 32 caracteres en `.env`. En la primera conexión se crea ese administrador en MongoDB y se le obliga a reemplazar la contraseña temporal.
 
 5. Inicia ambas aplicaciones:
 
@@ -56,6 +56,26 @@ Lucía Torres: http://localhost:5173/invite/Jh7...token-completo
 
 Una URL sin token o con un token que no exista muestra la pantalla de invitación privada. Las respuestas pueden cambiarse desde el mismo enlace y el dashboard siempre muestra la última decisión y su fecha.
 
+## Administradores y contraseñas
+
+No existe registro público. La primera cuenta se crea una sola vez a partir de `ADMIN_EMAIL` y `ADMIN_PASSWORD`; después, MongoDB es la fuente de identidad y cambiar esas variables no reemplaza la contraseña guardada.
+
+Las contraseñas nunca se guardan como texto legible. Se derivan con scrypt, una sal aleatoria por cuenta y comparación de tiempo constante. Cada administrador tiene `mustChangePassword`; cuando es `true`, solo puede acceder a la pantalla de actualización de contraseña.
+
+Para autorizar otro correo, genera una cuenta con contraseña temporal:
+
+```bash
+npm run admin:create -- admin2@example.com
+```
+
+Para restablecer una cuenta existente cuando olvidó su contraseña:
+
+```bash
+npm run admin:reset -- admin@example.com
+```
+
+Ambos comandos generan una contraseña temporal que se muestra una sola vez. El restablecimiento cierra todas las sesiones anteriores y exige una contraseña nueva en el siguiente inicio de sesión. Un administrador autenticado también puede cambiar su propia contraseña desde el dashboard.
+
 ## Video de YouTube
 
 Configura `VITE_YOUTUBE_VIDEO_ID` con la parte final de la URL de tu video. Por ejemplo, para `https://youtube.com/watch?v=ABC123`, usa:
@@ -70,7 +90,10 @@ La experiencia reproduce 60 segundos desde el punto configurado y luego abre el 
 ## Seguridad
 
 - Los tokens se generan con 192 bits de aleatoriedad y se guardan como hashes SHA-256.
+- Los correos de administradores tienen un índice único y no hay un endpoint de registro público.
+- Las contraseñas se guardan únicamente como hashes scrypt con sal aleatoria.
 - El dashboard usa una cookie firmada, `HttpOnly`, con ocho horas de duración.
+- Cambiar o restablecer una contraseña invalida las sesiones anteriores.
 - Los intentos de inicio de sesión están limitados por IP.
 - En producción, usa HTTPS, una contraseña larga y secretos diferentes a los del ejemplo.
 
@@ -81,6 +104,8 @@ npm run dev      # web + API en desarrollo
 npm run build    # build de producción del frontend
 npm run check    # ESLint y comprobaciones del servidor
 npm run seed -- "Nombre"  # crea invitados
+npm run admin:create -- admin@example.com # crea un administrador autorizado
+npm run admin:reset -- admin@example.com  # genera una contraseña temporal nueva
 npm start        # inicia la API
 ```
 
