@@ -4,19 +4,76 @@ import { ArrowRight, CalendarDays, Check, Heart, X } from 'lucide-react'
 import { api } from '../lib/api'
 import BrandMark from '../components/BrandMark'
 import FloralCorner from '../components/FloralCorner'
+import LanguageSwitch from '../components/LanguageSwitch'
 import LoadingScreen from '../components/LoadingScreen'
 import PrivatePage from './PrivatePage'
 import YouTubeVideo from '../components/YouTubeVideo'
+import { invitationCopy, useInvitationLanguage } from '../lib/invitationLanguage'
 
-const weddingDate = '14 · 11 · 2026'
+function formatWeddingDate(value) {
+  const match = /^(\d{4})-(\d{2})-(\d{2})(?:$|T)/.exec(value)
+  if (!match) return value
+  return `${match[3]} · ${match[2]} · ${match[1]}`
+}
+
+function weddingTimestamp(value) {
+  const dateOnly = /^(\d{4})-(\d{2})-(\d{2})$/.exec(value)
+  if (dateOnly) return new Date(Number(dateOnly[1]), Number(dateOnly[2]) - 1, Number(dateOnly[3])).getTime()
+  const timestamp = new Date(value).getTime()
+  return Number.isFinite(timestamp) ? timestamp : null
+}
+
+function countdownTo(value) {
+  const timestamp = weddingTimestamp(value)
+  if (timestamp === null) return null
+
+  const secondsRemaining = Math.max(0, Math.floor((timestamp - Date.now()) / 1000))
+  return {
+    days: Math.floor(secondsRemaining / 86400),
+    hours: Math.floor((secondsRemaining % 86400) / 3600),
+    minutes: Math.floor((secondsRemaining % 3600) / 60),
+    seconds: secondsRemaining % 60,
+  }
+}
+
+function WeddingCountdown({ date, copy }) {
+  const [remaining, setRemaining] = useState(() => countdownTo(date))
+
+  useEffect(() => {
+    setRemaining(countdownTo(date))
+    const interval = window.setInterval(() => setRemaining(countdownTo(date)), 1000)
+    return () => window.clearInterval(interval)
+  }, [date])
+
+  if (!remaining) return null
+  const units = [['days', 3], ['hours', 2], ['minutes', 2], ['seconds', 2]]
+
+  return (
+    <div className="wedding-countdown" aria-label={copy.countdownAria(remaining)}>
+      {units.map(([key, length]) => (
+        <div className="countdown-unit" key={key}>
+          <strong>{String(remaining[key]).padStart(length, '0')}</strong>
+          <small>{copy.countdownLabels[key]}</small>
+        </div>
+      ))}
+    </div>
+  )
+}
+
+const weddingDateValue = import.meta.env.VITE_WEDDING_DATE || '2026-11-14'
+const weddingDate = formatWeddingDate(weddingDateValue)
 
 export default function InvitationPage() {
   const { token } = useParams()
+  const [language, setLanguage] = useInvitationLanguage()
+  const copy = invitationCopy[language]
   const [invitation, setInvitation] = useState(null)
   const [stage, setStage] = useState('loading')
   const [decision, setDecision] = useState(null)
   const [error, setError] = useState('')
   const [submitting, setSubmitting] = useState(false)
+  const [weddingImageReady, setWeddingImageReady] = useState(false)
+  const weddingImageUrl = import.meta.env.VITE_WEDDING_IMAGE_URL || '/wedding-photo.jpg'
 
   useEffect(() => {
     let active = true
@@ -49,59 +106,62 @@ export default function InvitationPage() {
       setStage('confirmed')
     } catch (requestError) {
       if (requestError.status === 404) setStage('private')
-      else setError(requestError.message)
+      else setError(copy.requestError)
     } finally {
       setSubmitting(false)
     }
   }
 
-  if (stage === 'loading') return <LoadingScreen />
+  if (stage === 'loading') return <LoadingScreen copy={copy} language={language} onLanguageChange={setLanguage} />
   if (stage === 'private') return <PrivatePage />
   if (stage === 'unavailable') {
     return (
-      <main className="center-page paper-bg">
+      <main className="center-page paper-bg" lang={language}>
+        <LanguageSwitch language={language} onChange={setLanguage} />
         <BrandMark />
-        <p className="eyebrow">Un momento</p>
-        <h1>No pudimos abrir<br /><em>tu invitación</em></h1>
-        <p className="body-copy narrow">Comprueba tu conexión e inténtalo de nuevo en unos minutos.</p>
-        <button className="primary-button" onClick={() => window.location.reload()}>Intentar de nuevo</button>
+        <p className="eyebrow">{copy.unavailableEyebrow}</p>
+        <h1>{copy.unavailableTitle}</h1>
+        <p className="body-copy narrow">{copy.unavailableBody}</p>
+        <button className="primary-button" onClick={() => window.location.reload()}>{copy.tryAgain}</button>
       </main>
     )
   }
 
   if (stage === 'video') {
     return (
-      <main className="video-page">
-        <header className="video-header"><BrandMark light /><p>Una historia que queremos compartir contigo</p></header>
-        <YouTubeVideo onComplete={finishVideo} />
-        <button className="skip-button" onClick={finishVideo}>Saltar al RSVP <ArrowRight size={15} /></button>
+      <main className="video-page" lang={language}>
+        <LanguageSwitch language={language} onChange={setLanguage} />
+        <header className="video-header"><BrandMark light /><p>{copy.videoMessage}</p></header>
+        <YouTubeVideo onComplete={finishVideo} copy={copy} />
+        <button className="skip-button" onClick={finishVideo}>{copy.skipVideo} <ArrowRight size={15} /></button>
       </main>
     )
   }
 
   if (stage === 'rsvp') {
     return (
-      <main className="center-page paper-bg rsvp-page">
+      <main className="center-page paper-bg rsvp-page" lang={language}>
+        <LanguageSwitch language={language} onChange={setLanguage} />
         <FloralCorner />
         <FloralCorner position="bottom" />
         <BrandMark />
-        <p className="eyebrow">Querido/a {invitation.name}</p>
-        <h1>¿Nos acompañas<br /><em>en este día?</em></h1>
-        <p className="body-copy narrow">Tu presencia hará que esta celebración sea todavía más especial.</p>
+        <p className="eyebrow">{copy.dear(invitation.name)}</p>
+        <h1>{copy.rsvpTitle}</h1>
+        <p className="body-copy narrow">{copy.rsvpBody}</p>
         <div className="rsvp-actions">
           <button disabled={submitting} className="answer-card answer-card--yes" onClick={() => submitRsvp('yes')}>
             <span><Check size={25} /></span>
-            <strong>Sí, allí estaré</strong>
-            <small>Celebraré con ustedes</small>
+            <strong>{copy.yesAnswer}</strong>
+            <small>{copy.yesDetail}</small>
           </button>
           <button disabled={submitting} className="answer-card" onClick={() => submitRsvp('no')}>
             <span><X size={25} /></span>
-            <strong>No podré asistir</strong>
-            <small>Los acompañaré de corazón</small>
+            <strong>{copy.noAnswer}</strong>
+            <small>{copy.noDetail}</small>
           </button>
         </div>
         {error && <p className="form-error" role="alert">{error}</p>}
-        {decision && <p className="previous-answer">Tu respuesta anterior fue: <b>{decision === 'yes' ? 'Sí asistiré' : 'No podré asistir'}</b></p>}
+        {decision && <p className="previous-answer">{copy.previousAnswer} <b>{decision === 'yes' ? copy.previousYes : copy.previousNo}</b></p>}
       </main>
     )
   }
@@ -109,45 +169,59 @@ export default function InvitationPage() {
   if (stage === 'confirmed') {
     const attending = decision === 'yes'
     return (
-      <main className="center-page paper-bg confirmation-page">
+      <main className="center-page paper-bg confirmation-page" lang={language}>
+        <LanguageSwitch language={language} onChange={setLanguage} />
         <FloralCorner />
         <FloralCorner position="bottom" />
         <BrandMark />
         <div className="icon-seal icon-seal--heart"><Heart size={23} fill="currentColor" /></div>
-        <p className="eyebrow">Respuesta recibida</p>
-        <h1>{attending ? <>¡Qué alegría,<br /><em>{invitation.name}!</em></> : <>Gracias por<br /><em>respondernos</em></>}</h1>
+        <p className="eyebrow">{copy.responseReceived}</p>
+        <h1>{attending ? copy.attendingTitle(invitation.name) : copy.decliningTitle}</h1>
         <p className="body-copy narrow">
           {attending
-            ? 'Nos emociona saber que compartirás este capítulo con nosotros. Pronto recibirás todos los detalles.'
-            : 'Sentiremos no tenerte cerca, pero sabemos que nos acompañarás con todo tu cariño.'}
+            ? copy.attendingBody
+            : copy.decliningBody}
         </p>
-        {attending && <div className="date-card"><CalendarDays size={19} /><span>Guarda la fecha</span><strong>{weddingDate}</strong></div>}
-        <button className="text-button" onClick={() => setStage('rsvp')}>Cambiar mi respuesta</button>
+        {attending && <div className="date-card"><CalendarDays size={19} /><span>{copy.saveDate}</span><strong>{weddingDate}</strong></div>}
+        <button className="text-button" onClick={() => setStage('rsvp')}>{copy.changeResponse}</button>
         <p className="couple-signature">Annie &amp; Jonathan</p>
       </main>
     )
   }
 
   return (
-    <main className="welcome-page paper-bg">
-      <FloralCorner />
-      <FloralCorner position="bottom" />
-      <section className="welcome-content">
-        <BrandMark />
-        <p className="eyebrow">Tenemos algo que contarte</p>
-        <div className="names-lockup"><span>Annie</span><b>&amp;</b><span>Jonathan</span></div>
-        <p className="getting-married">Nos casamos</p>
-        <div className="date-line"><span />{weddingDate}<span /></div>
-        <div className="guest-note">
-          <p>Una invitación especialmente para</p>
-          <strong>{invitation.name}</strong>
+    <main className="welcome-page" lang={language}>
+      <LanguageSwitch language={language} onChange={setLanguage} />
+      <section className="welcome-invitation paper-bg">
+        <FloralCorner />
+        <FloralCorner position="bottom" />
+        <div className="welcome-content">
+          <BrandMark />
+          <p className="eyebrow">{copy.welcomeEyebrow}</p>
+          <div className="names-lockup"><span>Annie</span><b>&amp;</b><span>Jonathan</span></div>
+          <p className="getting-married">{copy.gettingMarried}</p>
+          <div className="date-line"><span />{weddingDate}<span /></div>
+          <div className="guest-note">
+            <p>{copy.guestFor}</p>
+            <strong>{invitation.name}</strong>
+          </div>
+          <WeddingCountdown date={weddingDateValue} copy={copy} />
+          {decision && <p className="response-saved">{decision === 'yes' ? copy.savedYes : copy.savedNo}</p>}
+          {decision && <button className="text-button" onClick={() => setStage('rsvp')}>{copy.changeResponse}</button>}
+          <p className="sound-copy">{copy.sound}</p>
         </div>
-        {decision && <p className="response-saved">Tu respuesta está guardada: {decision === 'yes' ? 'sí asistirás' : 'no podrás asistir'}.</p>}
-        <button className="primary-button" onClick={() => setStage('video')}>
-          {decision ? 'Volver a ver la invitación' : 'Abrir nuestra invitación'} <ArrowRight size={17} />
+      </section>
+      <section className={`welcome-photo ${weddingImageReady ? 'welcome-photo--ready' : ''}`} aria-label={copy.photoLabel}>
+        <div className="photo-placeholder" aria-hidden="true">
+          <Heart size={31} strokeWidth={1.25} />
+          <span>{copy.photoPlaceholder}</span>
+          <small>{copy.comingSoon}</small>
+        </div>
+        <img src={weddingImageUrl} alt={weddingImageReady ? copy.photoAlt : ''} onLoad={() => setWeddingImageReady(true)} onError={() => setWeddingImageReady(false)} />
+        <button className="welcome-rsvp-button" onClick={() => setStage('video')} aria-label={decision ? copy.openAgain : copy.openInvitation}>
+          <span>RSVP</span>
+          <ArrowRight size={17} />
         </button>
-        {decision && <button className="text-button" onClick={() => setStage('rsvp')}>Cambiar mi respuesta</button>}
-        <p className="sound-copy">Prepara el sonido para disfrutar la experiencia</p>
       </section>
     </main>
   )

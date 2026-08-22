@@ -11,6 +11,7 @@ export async function api(path, options = {}) {
   if (!response.ok) {
     const error = new Error(body?.message || 'Unable to connect. Please try again.')
     error.status = response.status
+    error.code = body?.code
     throw error
   }
   return body

@@ -42,7 +42,7 @@ En desarrollo, Vite reenvía automáticamente las peticiones `/api` al puerto `4
 
 ## Crear invitaciones
 
-Cada invitado recibe un token aleatorio. El token se muestra una sola vez y MongoDB guarda únicamente su hash, así que conserva los enlaces que devuelve este comando:
+Cada invitado recibe un token aleatorio. MongoDB guarda su hash para validar el acceso y una copia cifrada para que un administrador autenticado pueda volver a copiar o compartir el enlace desde el dashboard:
 
 ```bash
 npm run seed -- "Lucía Torres" "Mateo Díaz" "Familia Rivera"
@@ -87,9 +87,27 @@ VITE_YOUTUBE_START_SECONDS=0
 
 La experiencia reproduce 60 segundos desde el punto configurado y luego abre el RSVP. Por ejemplo, `VITE_YOUTUBE_START_SECONDS=20` reproduce desde 0:20 hasta 1:20. YouTube puede impedir autoplay hasta que exista una interacción; por eso el invitado pulsa primero **Abrir nuestra invitación**.
 
+## Fecha de la boda
+
+Configura la fecha que aparece en la invitación y alimenta la cuenta regresiva usando el formato ISO `AAAA-MM-DD`:
+
+```env
+VITE_WEDDING_DATE=2026-11-14
+```
+
+Con ese formato, la cuenta regresiva termina al comenzar el día según la zona horaria del invitado. Para apuntar a una hora y zona específicas, usa una fecha ISO completa, por ejemplo `2026-11-14T17:00:00-05:00`.
+
+Al cambiarla en producción, crea un nuevo deployment para que Vite incorpore el valor actualizado.
+
+La portada muestra un espacio reservado para la fotografía de la pareja. Para reemplazarlo sin configuración adicional, guarda la imagen como `apps/web/public/wedding-photo.jpg`. Como alternativa, puedes alojarla en Vercel Blob u otro CDN y configurar su URL:
+
+```env
+VITE_WEDDING_IMAGE_URL=https://example.public.blob.vercel-storage.com/pareja.jpg
+```
+
 ## Seguridad
 
-- Los tokens se generan con 192 bits de aleatoriedad y se guardan como hashes SHA-256.
+- Los tokens se generan con 192 bits de aleatoriedad. Se guardan como hashes SHA-256 para validar el acceso y con cifrado AES-256-GCM para que solo el dashboard autenticado pueda recuperar los enlaces.
 - Los correos de administradores tienen un índice único y no hay un endpoint de registro público.
 - Las contraseñas se guardan únicamente como hashes scrypt con sal aleatoria.
 - El dashboard usa una cookie firmada, `HttpOnly`, con ocho horas de duración.
@@ -115,4 +133,4 @@ Ejecuta `npm run build` y configura `NODE_ENV=production`. Después, `npm start`
 
 ### Vercel
 
-El archivo `vercel.json` construye `apps/web/dist`, envía `/api/*` a la función Express y conserva las rutas del SPA. Importa el repositorio con el directorio raíz sin modificar y configura estas variables para Production y Preview: `MONGODB_URI`, `ADMIN_EMAIL`, `ADMIN_PASSWORD`, `JWT_SECRET`, `VITE_YOUTUBE_VIDEO_ID` y `VITE_YOUTUBE_START_SECONDS`. `PUBLIC_APP_URL` es opcional porque Vercel proporciona su dominio automáticamente; configúralo explícitamente al usar un dominio personalizado. Después de cambiar variables, crea un nuevo deployment.
+El archivo `vercel.json` construye `apps/web/dist`, envía `/api/*` a la función Express y conserva las rutas del SPA. Importa el repositorio con el directorio raíz sin modificar y configura estas variables para Production y Preview: `MONGODB_URI`, `ADMIN_EMAIL`, `ADMIN_PASSWORD`, `JWT_SECRET`, `VITE_YOUTUBE_VIDEO_ID`, `VITE_YOUTUBE_START_SECONDS`, `VITE_WEDDING_DATE` y `VITE_WEDDING_IMAGE_URL`. `PUBLIC_APP_URL` es opcional porque Vercel proporciona su dominio automáticamente; configúralo explícitamente al usar un dominio personalizado. Después de cambiar variables, crea un nuevo deployment.

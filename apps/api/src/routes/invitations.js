@@ -7,7 +7,7 @@ const validToken = /^[A-Za-z0-9_-]{20,100}$/
 
 async function findInvitation(token) {
   if (!validToken.test(token)) return null
-  return Invitation.findOne({ tokenHash: hashInvitationToken(token) })
+  return Invitation.findOne({ tokenHash: hashInvitationToken(token), hiddenAt: null })
 }
 
 router.get('/:token', async (req, res, next) => {

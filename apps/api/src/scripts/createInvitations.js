@@ -1,7 +1,7 @@
 import { config } from '../config.js'
 import { connectDatabase } from '../db.js'
 import { Invitation } from '../models/Invitation.js'
-import { createInvitationToken, hashInvitationToken } from '../utils/tokens.js'
+import { createInvitationToken, encryptInvitationToken, hashInvitationToken } from '../utils/tokens.js'
 
 const names = process.argv.slice(2).map((name) => name.trim()).filter(Boolean)
 
@@ -24,6 +24,7 @@ try {
       name,
       tokenHash: hashInvitationToken(token),
       tokenPreview: `${token.slice(0, 5)}…${token.slice(-4)}`,
+      tokenCiphertext: encryptInvitationToken(token, config.jwtSecret),
     })
     console.log(`${name}: ${config.publicAppUrl || 'http://localhost:5173'}/invite/${token}`)
   }
