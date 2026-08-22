@@ -87,3 +87,7 @@ npm start        # inicia la API
 ## Producción en un solo servicio
 
 Ejecuta `npm run build` y configura `NODE_ENV=production`. Después, `npm start` sirve la API y también `apps/web/dist`, incluyendo las rutas `/invite/:token` y `/admin`. Mantén `VITE_API_URL` vacío cuando ambos usen el mismo dominio.
+
+### Vercel
+
+El archivo `vercel.json` construye `apps/web/dist`, envía `/api/*` a la función Express y conserva las rutas del SPA. Importa el repositorio con el directorio raíz sin modificar y configura estas variables para Production y Preview: `MONGODB_URI`, `ADMIN_EMAIL`, `ADMIN_PASSWORD`, `JWT_SECRET`, `VITE_YOUTUBE_VIDEO_ID` y `VITE_YOUTUBE_START_SECONDS`. `PUBLIC_APP_URL` es opcional porque Vercel proporciona su dominio automáticamente; configúralo explícitamente al usar un dominio personalizado. Después de cambiar variables, crea un nuevo deployment.

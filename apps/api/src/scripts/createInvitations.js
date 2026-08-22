@@ -25,7 +25,7 @@ try {
       tokenHash: hashInvitationToken(token),
       tokenPreview: `${token.slice(0, 5)}…${token.slice(-4)}`,
     })
-    console.log(`${name}: ${config.publicAppUrl}/invite/${token}`)
+    console.log(`${name}: ${config.publicAppUrl || 'http://localhost:5173'}/invite/${token}`)
   }
 
   process.exit(0)

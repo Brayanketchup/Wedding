@@ -2,13 +2,17 @@
   "name": "boda",
   "private": true,
   "version": "1.0.0",
+  "type": "module",
   "workspaces": ["apps/*"],
+  "engines": {
+    "node": ">=20"
+  },
   "scripts": {
     "dev": "concurrently -n WEB,API -c magenta,green \"npm run dev -w @boda/web\" \"npm run dev -w @boda/api\"",
     "build": "npm run build -w @boda/web",
     "start": "npm run start -w @boda/api",
     "seed": "npm run seed -w @boda/api",
-    "check": "npm run check -w @boda/web && npm run check -w @boda/api"
+    "check": "node --check api/index.js && npm run check -w @boda/web && npm run check -w @boda/api"
   },
   "devDependencies": {
     "concurrently": "^9.2.1"

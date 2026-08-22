@@ -92,7 +92,7 @@ router.post('/invitations', requireAdmin, async (req, res, next) => {
         decision: invitation.decision,
         createdAt: invitation.createdAt,
       },
-      url: `${config.publicAppUrl.replace(/\/$/, '')}/invite/${token}`,
+      url: `${(config.publicAppUrl || `${req.protocol}://${req.get('host')}`).replace(/\/$/, '')}/invite/${token}`,
     })
   } catch (error) {
     next(error)
