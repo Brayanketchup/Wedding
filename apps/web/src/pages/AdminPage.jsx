@@ -13,9 +13,9 @@ function PasswordInput(props) {
         type="button"
         className="password-visibility"
         onClick={() => setVisible((current) => !current)}
-        aria-label={visible ? 'Ocultar contraseña' : 'Mostrar contraseña'}
+        aria-label={visible ? 'Hide password' : 'Show password'}
         aria-pressed={visible}
-        title={visible ? 'Ocultar contraseña' : 'Mostrar contraseña'}
+        title={visible ? 'Hide password' : 'Show password'}
       >
         {visible ? <EyeOff size={18} /> : <Eye size={18} />}
       </button>
@@ -50,19 +50,19 @@ function Login({ onLogin }) {
     <main className="admin-login">
       <section className="login-art">
         <BrandMark light />
-        <div><p className="eyebrow">Annie &amp; Jonathan</p><h1>Todo lo que importa,<br /><em>en un solo lugar.</em></h1></div>
-        <p className="login-quote">“El amor no se mira, se siente.”</p>
+        <div><p className="eyebrow">Annie &amp; Jonathan</p><h1>Everything that matters,<br /><em>all in one place.</em></h1></div>
+        <p className="login-quote">“Love is not seen, it is felt.”</p>
       </section>
       <section className="login-form-wrap">
         <form className="login-form" onSubmit={submit}>
           <div className="mobile-logo"><BrandMark /></div>
-          <p className="eyebrow">Área privada</p>
-          <h2>Bienvenidos</h2>
-          <p>Inicia sesión para ver las respuestas de tus invitados.</p>
-          <label>Correo electrónico<input type="email" value={email} onChange={(e) => setEmail(e.target.value)} autoComplete="email" required placeholder="admin@correo.com" /></label>
-          <label>Contraseña<PasswordInput value={password} onChange={(e) => setPassword(e.target.value)} autoComplete="current-password" required placeholder="••••••••••••" /></label>
+          <p className="eyebrow">Private area</p>
+          <h2>Welcome</h2>
+          <p>Sign in to view your guests' responses.</p>
+          <label>Email address<input type="email" value={email} onChange={(e) => setEmail(e.target.value)} autoComplete="email" required placeholder="admin@example.com" /></label>
+          <label>Password<PasswordInput value={password} onChange={(e) => setPassword(e.target.value)} autoComplete="current-password" required placeholder="••••••••••••" /></label>
           {error && <p className="form-error" role="alert">{error}</p>}
-          <button className="admin-button" disabled={busy}>{busy ? 'Entrando…' : 'Entrar al dashboard'}</button>
+          <button className="admin-button" disabled={busy}>{busy ? 'Signing in…' : 'Sign in'}</button>
         </form>
       </section>
     </main>
@@ -80,7 +80,7 @@ function PasswordForm({ forced = false, onChanged, onCancel }) {
     event.preventDefault()
     setError('')
     if (newPassword !== confirmation) {
-      setError('Las contraseñas nuevas no coinciden.')
+      setError('The new passwords do not match.')
       return
     }
 
@@ -100,13 +100,13 @@ function PasswordForm({ forced = false, onChanged, onCancel }) {
 
   return (
     <form className="password-form" onSubmit={submit}>
-      <p>{forced ? 'Por seguridad, reemplaza tu contraseña temporal antes de entrar al dashboard.' : 'Introduce tu contraseña actual y elige una nueva.'}</p>
-      {!forced && <label>Contraseña actual<PasswordInput value={currentPassword} onChange={(event) => setCurrentPassword(event.target.value)} autoComplete="current-password" required /></label>}
-      <label>Nueva contraseña<PasswordInput value={newPassword} onChange={(event) => setNewPassword(event.target.value)} autoComplete="new-password" minLength="12" maxLength="128" required /><small>Mínimo 12 caracteres</small></label>
-      <label>Confirmar nueva contraseña<PasswordInput value={confirmation} onChange={(event) => setConfirmation(event.target.value)} autoComplete="new-password" minLength="12" maxLength="128" required /></label>
+      <p>{forced ? 'For security, replace your temporary password before entering the dashboard.' : 'Enter your current password and choose a new one.'}</p>
+      {!forced && <label>Current password<PasswordInput value={currentPassword} onChange={(event) => setCurrentPassword(event.target.value)} autoComplete="current-password" required /></label>}
+      <label>New password<PasswordInput value={newPassword} onChange={(event) => setNewPassword(event.target.value)} autoComplete="new-password" minLength="12" maxLength="128" required /><small>At least 12 characters</small></label>
+      <label>Confirm new password<PasswordInput value={confirmation} onChange={(event) => setConfirmation(event.target.value)} autoComplete="new-password" minLength="12" maxLength="128" required /></label>
       {error && <p className="form-error" role="alert">{error}</p>}
-      <button className="admin-button" disabled={busy}>{busy ? 'Guardando…' : 'Guardar nueva contraseña'}</button>
-      {!forced && <button type="button" className="text-button" onClick={onCancel}>Cancelar</button>}
+      <button className="admin-button" disabled={busy}>{busy ? 'Saving…' : 'Save new password'}</button>
+      {!forced && <button type="button" className="text-button" onClick={onCancel}>Cancel</button>}
     </form>
   )
 }
@@ -116,16 +116,16 @@ function ForcedPasswordChange({ admin, onChanged, onLogout }) {
     <main className="admin-login">
       <section className="login-art">
         <BrandMark light />
-        <div><p className="eyebrow">Cuenta protegida</p><h1>Primero,<br /><em>tu seguridad.</em></h1></div>
-        <p className="login-quote">Sesión iniciada como {admin.email}</p>
+        <div><p className="eyebrow">Protected account</p><h1>Your security<br /><em>comes first.</em></h1></div>
+        <p className="login-quote">Signed in as {admin.email}</p>
       </section>
       <section className="login-form-wrap">
         <div className="login-form">
           <div className="mobile-logo"><BrandMark /></div>
-          <p className="eyebrow">Actualización requerida</p>
-          <h2>Crea tu contraseña</h2>
+          <p className="eyebrow">Update required</p>
+          <h2>Create your password</h2>
           <PasswordForm forced onChanged={onChanged} />
-          <button className="text-button forced-logout" onClick={onLogout}>Cerrar sesión</button>
+          <button className="text-button forced-logout" onClick={onLogout}>Sign out</button>
         </div>
       </section>
     </main>
@@ -133,20 +133,20 @@ function ForcedPasswordChange({ admin, onChanged, onLogout }) {
 }
 
 const statConfig = [
-  ['total', 'all', 'Invitados', <Users size={20} />],
-  ['yes', 'yes', 'Confirmados', <Check size={20} />],
-  ['no', 'no', 'No asistirán', <X size={20} />],
-  ['pending', 'pending', 'Pendientes', <Clock3 size={20} />],
+  ['total', 'all', 'All guests', <Users size={20} />],
+  ['yes', 'yes', 'Attending', <Check size={20} />],
+  ['no', 'no', 'Not attending', <X size={20} />],
+  ['pending', 'pending', 'Pending', <Clock3 size={20} />],
 ]
 
 function DecisionBadge({ decision }) {
-  const labels = { yes: 'Asistirá', no: 'No asistirá', pending: 'Pendiente' }
+  const labels = { yes: 'Attending', no: 'Not attending', pending: 'Pending' }
   return <span className={`decision decision--${decision}`}>{labels[decision]}</span>
 }
 
 function formatDate(date) {
   if (!date) return '—'
-  return new Intl.DateTimeFormat('es', { dateStyle: 'medium', timeStyle: 'short' }).format(new Date(date))
+  return new Intl.DateTimeFormat('en-US', { dateStyle: 'medium', timeStyle: 'short' }).format(new Date(date))
 }
 
 function Dashboard({ admin, onLogout, onAdminChange }) {
@@ -251,7 +251,7 @@ function Dashboard({ admin, onLogout, onAdminChange }) {
   }
 
   async function hideInvitation(invitation) {
-    const confirmed = window.confirm(`¿Ocultar la invitación de ${invitation.name}? El enlace dejará de funcionar, pero los datos no se eliminarán.`)
+    const confirmed = window.confirm(`Hide ${invitation.name}'s invitation? The link will stop working, but the data will not be deleted.`)
     if (!confirmed) return
 
     setHidingId(invitation.id)
@@ -273,7 +273,7 @@ function Dashboard({ admin, onLogout, onAdminChange }) {
     } catch (requestError) {
       if (requestError.code !== 'LINK_NOT_RECOVERABLE') throw requestError
 
-      const confirmed = window.confirm(`El enlace de ${invitation.name} fue creado antes de que se pudieran recuperar enlaces. ¿Generar uno nuevo? El enlace anterior dejará de funcionar.`)
+      const confirmed = window.confirm(`${invitation.name}'s link was created before links could be recovered. Generate a new one? The previous link will stop working.`)
       if (!confirmed) return null
 
       const result = await api(`/api/admin/invitations/${invitation.id}/link`, {
@@ -307,8 +307,8 @@ function Dashboard({ admin, onLogout, onAdminChange }) {
       const url = await getInvitationUrl(invitation)
       if (!url) return
       const sharing = {
-        title: `Invitación para ${invitation.name}`,
-        text: `Te invitamos a celebrar nuestra boda. Abre aquí tu invitación privada:`,
+        title: `Invitation for ${invitation.name}`,
+        text: 'We invite you to celebrate our wedding. Open your private invitation here:',
         url,
       }
 
@@ -349,21 +349,21 @@ function Dashboard({ admin, onLogout, onAdminChange }) {
     <main className="dashboard">
       <aside className="admin-sidebar">
         <BrandMark light />
-        <div className="sidebar-title"><span>Panel de boda</span></div>
-        <nav><button className="active"><Heart size={18} /> Invitaciones</button></nav>
-        <div className="admin-user"><span>{admin.email.slice(0, 1).toUpperCase()}</span><div><strong>Administración</strong><small>{admin.email}</small></div></div>
+        <div className="sidebar-title"><span>Wedding dashboard</span></div>
+        <nav><button className="active"><Heart size={18} /> Invitations</button></nav>
+        <div className="admin-user"><span>{admin.email.slice(0, 1).toUpperCase()}</span><div><strong>Administrator</strong><small>{admin.email}</small></div></div>
         <div className="sidebar-account-actions">
-          <button onClick={() => setPasswordOpen(true)}><KeyRound size={17} /> Cambiar contraseña</button>
-          <button onClick={onLogout}><LogOut size={17} /> Cerrar sesión</button>
+          <button onClick={() => setPasswordOpen(true)}><KeyRound size={17} /> Change password</button>
+          <button onClick={onLogout}><LogOut size={17} /> Sign out</button>
         </div>
       </aside>
 
       <section className="dashboard-content">
         <header className="dashboard-header">
-          <div><p className="eyebrow">Panel de boda</p><h1>Invitados</h1><p>Consulta las respuestas a vuestra invitación.</p></div>
+          <div><p className="eyebrow">Wedding dashboard</p><h1>Guests</h1><p>View and manage your guests' responses.</p></div>
           <div className="dashboard-header-actions">
-            <button className="refresh-button" onClick={load} disabled={refreshing}><RefreshCw size={16} className={refreshing ? 'spin' : ''} /> Actualizar</button>
-            <button className="new-invitation-button" onClick={() => setCreatorOpen(true)}><Plus size={16} /> Nueva invitación</button>
+            <button className="refresh-button" onClick={load} disabled={refreshing}><RefreshCw size={16} className={refreshing ? 'spin' : ''} /> Refresh</button>
+            <button className="new-invitation-button" onClick={() => setCreatorOpen(true)}><Plus size={16} /> New invitation</button>
           </div>
         </header>
 
@@ -377,17 +377,17 @@ function Dashboard({ admin, onLogout, onAdminChange }) {
 
         <section className="guest-panel">
           <div className="guest-toolbar">
-            <div><h2>Lista de invitados</h2><p>{invitations.length} resultados</p></div>
+            <div><h2>Guest list</h2><p>{invitations.length} results</p></div>
             <div className="toolbar-actions">
-              <label className="search-box"><Search size={17} /><input value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Buscar invitado" /></label>
+              <label className="search-box"><Search size={17} /><input value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Search guests" /></label>
             </div>
           </div>
-          {error && <div className="dashboard-error">{error} <button onClick={load}>Reintentar</button></div>}
-          {!error && !data && <div className="table-loading">Cargando respuestas…</div>}
+          {error && <div className="dashboard-error">{error} <button onClick={load}>Try again</button></div>}
+          {!error && !data && <div className="table-loading">Loading responses…</div>}
           {data && (
             <div className="table-scroll">
               <table>
-                <thead><tr><th>Invitado</th><th>Estado</th><th>Respondió</th><th>Acciones</th></tr></thead>
+                <thead><tr><th>Guest</th><th>Status</th><th>Responded</th><th>Actions</th></tr></thead>
                 <tbody>
                   {invitations.map((item) => (
                     <tr key={item.id}>
@@ -396,17 +396,17 @@ function Dashboard({ admin, onLogout, onAdminChange }) {
                       <td>{formatDate(item.respondedAt)}</td>
                       <td>
                         <div className="invitation-actions">
-                          <button type="button" onClick={() => copyInvitationLink(item)} disabled={linkActionId === item.id} aria-label={`Copiar enlace de ${item.name}`} title={copiedInvitationId === item.id ? 'Enlace copiado' : 'Copiar enlace'}>{copiedInvitationId === item.id ? <Check size={15} /> : <Copy size={15} />}</button>
-                          <button type="button" onClick={() => shareInvitation(item)} disabled={linkActionId === item.id} aria-label={`Compartir invitación de ${item.name}`} title="Compartir invitación"><Share2 size={15} /></button>
-                          <button type="button" onClick={() => openEditor(item)} aria-label={`Editar nombre de ${item.name}`} title="Editar nombre"><Pencil size={15} /></button>
-                          <button type="button" className="hide-invitation" onClick={() => hideInvitation(item)} disabled={hidingId === item.id} aria-label={`Ocultar invitación de ${item.name}`} title="Ocultar invitación"><Trash2 size={15} /></button>
+                          <button type="button" onClick={() => copyInvitationLink(item)} disabled={linkActionId === item.id} aria-label={`Copy ${item.name}'s link`} title={copiedInvitationId === item.id ? 'Link copied' : 'Copy link'}>{copiedInvitationId === item.id ? <Check size={15} /> : <Copy size={15} />}</button>
+                          <button type="button" onClick={() => shareInvitation(item)} disabled={linkActionId === item.id} aria-label={`Share ${item.name}'s invitation`} title="Share invitation"><Share2 size={15} /></button>
+                          <button type="button" onClick={() => openEditor(item)} aria-label={`Edit ${item.name}'s name`} title="Edit name"><Pencil size={15} /></button>
+                          <button type="button" className="hide-invitation" onClick={() => hideInvitation(item)} disabled={hidingId === item.id} aria-label={`Hide ${item.name}'s invitation`} title="Hide invitation"><Trash2 size={15} /></button>
                         </div>
                       </td>
                     </tr>
                   ))}
                 </tbody>
               </table>
-              {!invitations.length && <div className="empty-table">No hay invitados que coincidan con la búsqueda.</div>}
+              {!invitations.length && <div className="empty-table">No guests match your search.</div>}
             </div>
           )}
         </section>
@@ -415,23 +415,23 @@ function Dashboard({ admin, onLogout, onAdminChange }) {
       {creatorOpen && (
         <div className="modal-backdrop" role="presentation" onMouseDown={(event) => event.target === event.currentTarget && closeCreator()}>
           <section className="invitation-modal" role="dialog" aria-modal="true" aria-labelledby="create-title">
-            <button className="modal-close" onClick={closeCreator} aria-label="Cerrar"><X size={18} /></button>
-            <p className="eyebrow">Invitación privada</p>
-            <h2 id="create-title">Crear invitación</h2>
+            <button className="modal-close" onClick={closeCreator} aria-label="Close"><X size={18} /></button>
+            <p className="eyebrow">Private invitation</p>
+            <h2 id="create-title">Create invitation</h2>
             {!createdUrl ? (
               <form onSubmit={createInvitation}>
-                <p>Escribe el nombre tal como quieres que aparezca en la invitación.</p>
-                <label>Nombre del invitado<input autoFocus value={guestName} onChange={(event) => setGuestName(event.target.value)} placeholder="Ej. Familia Rodríguez" minLength="2" maxLength="120" required /></label>
+                <p>Enter the name exactly as you want it to appear on the invitation.</p>
+                <label>Guest name<input autoFocus value={guestName} onChange={(event) => setGuestName(event.target.value)} placeholder="e.g. The Smith Family" minLength="2" maxLength="120" required /></label>
                 {createError && <p className="form-error" role="alert">{createError}</p>}
-                <button className="admin-button" disabled={creating}>{creating ? 'Creando…' : 'Crear enlace privado'}</button>
+                <button className="admin-button" disabled={creating}>{creating ? 'Creating…' : 'Create private link'}</button>
               </form>
             ) : (
               <div className="created-invitation">
                 <span className="created-check"><Check size={24} /></span>
-                <h3>Invitación creada</h3>
-                <p>Copia el enlace y envíalo al invitado. También podrás copiarlo o compartirlo más tarde desde la lista.</p>
-                <div className="created-link"><input readOnly value={createdUrl} /><button onClick={copyCreatedUrl}><Copy size={16} /> {copied ? 'Copiado' : 'Copiar'}</button></div>
-                <button className="text-button" onClick={() => setCreatedUrl('')}>Crear otra invitación</button>
+                <h3>Invitation created</h3>
+                <p>Copy the link and send it to the guest. You can also copy or share it later from the list.</p>
+                <div className="created-link"><input readOnly value={createdUrl} /><button onClick={copyCreatedUrl}><Copy size={16} /> {copied ? 'Copied' : 'Copy'}</button></div>
+                <button className="text-button" onClick={() => setCreatedUrl('')}>Create another invitation</button>
               </div>
             )}
           </section>
@@ -441,9 +441,9 @@ function Dashboard({ admin, onLogout, onAdminChange }) {
       {passwordOpen && (
         <div className="modal-backdrop" role="presentation" onMouseDown={(event) => event.target === event.currentTarget && setPasswordOpen(false)}>
           <section className="invitation-modal password-modal" role="dialog" aria-modal="true" aria-labelledby="password-title">
-            <button className="modal-close" onClick={() => setPasswordOpen(false)} aria-label="Cerrar"><X size={18} /></button>
-            <p className="eyebrow">Seguridad de la cuenta</p>
-            <h2 id="password-title">Cambiar contraseña</h2>
+            <button className="modal-close" onClick={() => setPasswordOpen(false)} aria-label="Close"><X size={18} /></button>
+            <p className="eyebrow">Account security</p>
+            <h2 id="password-title">Change password</h2>
             <PasswordForm onCancel={() => setPasswordOpen(false)} onChanged={(value) => { onAdminChange(value); setPasswordOpen(false) }} />
           </section>
         </div>
@@ -452,15 +452,15 @@ function Dashboard({ admin, onLogout, onAdminChange }) {
       {editingInvitation && (
         <div className="modal-backdrop" role="presentation" onMouseDown={(event) => event.target === event.currentTarget && closeEditor()}>
           <section className="invitation-modal" role="dialog" aria-modal="true" aria-labelledby="edit-title">
-            <button className="modal-close" onClick={closeEditor} aria-label="Cerrar"><X size={18} /></button>
-            <p className="eyebrow">Invitación privada</p>
-            <h2 id="edit-title">Editar nombre</h2>
+            <button className="modal-close" onClick={closeEditor} aria-label="Close"><X size={18} /></button>
+            <p className="eyebrow">Private invitation</p>
+            <h2 id="edit-title">Edit name</h2>
             <form onSubmit={saveInvitationName}>
-              <p>El nuevo nombre aparecerá en la invitación cuando el invitado abra su enlace.</p>
-              <label>Nombre del invitado<input autoFocus value={editedName} onChange={(event) => setEditedName(event.target.value)} minLength="2" maxLength="120" required /></label>
+              <p>The new name will appear when the guest opens their invitation link.</p>
+              <label>Guest name<input autoFocus value={editedName} onChange={(event) => setEditedName(event.target.value)} minLength="2" maxLength="120" required /></label>
               {editError && <p className="form-error" role="alert">{editError}</p>}
-              <button className="admin-button" disabled={savingEdit}>{savingEdit ? 'Guardando…' : 'Guardar cambios'}</button>
-              <button type="button" className="text-button modal-cancel" onClick={closeEditor} disabled={savingEdit}>Cancelar</button>
+              <button className="admin-button" disabled={savingEdit}>{savingEdit ? 'Saving…' : 'Save changes'}</button>
+              <button type="button" className="text-button modal-cancel" onClick={closeEditor} disabled={savingEdit}>Cancel</button>
             </form>
           </section>
         </div>
@@ -469,14 +469,14 @@ function Dashboard({ admin, onLogout, onAdminChange }) {
       {shareData && (
         <div className="modal-backdrop" role="presentation" onMouseDown={(event) => event.target === event.currentTarget && setShareData(null)}>
           <section className="invitation-modal share-modal" role="dialog" aria-modal="true" aria-labelledby="share-title">
-            <button className="modal-close" onClick={() => setShareData(null)} aria-label="Cerrar"><X size={18} /></button>
-            <p className="eyebrow">Invitación privada</p>
-            <h2 id="share-title">Compartir invitación</h2>
-            <p>Envía la invitación de {shareData.invitation.name} por correo, mensaje de texto o copia el enlace.</p>
+            <button className="modal-close" onClick={() => setShareData(null)} aria-label="Close"><X size={18} /></button>
+            <p className="eyebrow">Private invitation</p>
+            <h2 id="share-title">Share invitation</h2>
+            <p>Send {shareData.invitation.name}'s invitation by email or text message, or copy the link.</p>
             <div className="share-options">
-              <a href={`mailto:?subject=${encodeURIComponent(`Invitación para ${shareData.invitation.name}`)}&body=${encodeURIComponent(`Te invitamos a celebrar nuestra boda. Abre aquí tu invitación privada:\n\n${shareData.url}`)}`}><Mail size={18} /> Correo</a>
-              <a href={`sms:?&body=${encodeURIComponent(`Te invitamos a celebrar nuestra boda. Abre aquí tu invitación privada: ${shareData.url}`)}`}><MessageCircle size={18} /> Mensaje</a>
-              <button type="button" onClick={copySharedLink}>{copiedInvitationId === shareData.invitation.id ? <Check size={18} /> : <Copy size={18} />} {copiedInvitationId === shareData.invitation.id ? 'Copiado' : 'Copiar enlace'}</button>
+              <a href={`mailto:?subject=${encodeURIComponent(`Invitation for ${shareData.invitation.name}`)}&body=${encodeURIComponent(`We invite you to celebrate our wedding. Open your private invitation here:\n\n${shareData.url}`)}`}><Mail size={18} /> Email</a>
+              <a href={`sms:?&body=${encodeURIComponent(`We invite you to celebrate our wedding. Open your private invitation here: ${shareData.url}`)}`}><MessageCircle size={18} /> Text message</a>
+              <button type="button" onClick={copySharedLink}>{copiedInvitationId === shareData.invitation.id ? <Check size={18} /> : <Copy size={18} />} {copiedInvitationId === shareData.invitation.id ? 'Copied' : 'Copy link'}</button>
             </div>
           </section>
         </div>
@@ -491,7 +491,7 @@ export default function AdminPage() {
 
   useEffect(() => {
     const previousLanguage = document.documentElement.lang
-    document.documentElement.lang = 'es'
+    document.documentElement.lang = 'en'
     return () => { document.documentElement.lang = previousLanguage }
   }, [])
 
