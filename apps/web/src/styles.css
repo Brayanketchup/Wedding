@@ -63,6 +63,7 @@ button:disabled { cursor: wait; opacity: .65; }
 .welcome-rsvp-button:focus-visible { outline: 3px solid #e8f6ee; outline-offset: 4px; }
 
 .brand-mark { color: var(--forest); display: inline-flex; align-items: center; gap: 10px; font: 500 25px/1 'Cormorant Garamond', serif; letter-spacing: .06em; }
+.brand-mark > span:last-child { transform: translateY(-2px); }
 .brand-mark i { position: relative; width: 24px; height: 15px; display: block; }
 .brand-mark i::before, .brand-mark i::after { content: ''; position: absolute; width: 13px; height: 13px; border: 1px solid currentColor; border-radius: 50%; top: 0; }
 .brand-mark i::before { left: 2px; }

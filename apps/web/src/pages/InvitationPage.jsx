@@ -182,7 +182,12 @@ export default function InvitationPage() {
             ? copy.attendingBody
             : copy.decliningBody}
         </p>
-        {attending && <div className="date-card"><CalendarDays size={19} /><span>{copy.saveDate}</span><strong>{weddingDate}</strong></div>}
+        {attending && (
+          <>
+            <div className="date-card"><CalendarDays size={19} /><span>{copy.saveDate}</span><strong>{weddingDate}</strong></div>
+            <WeddingCountdown date={weddingDateValue} copy={copy} />
+          </>
+        )}
         <button className="text-button" onClick={() => setStage('rsvp')}>{copy.changeResponse}</button>
         <p className="couple-signature">Annie &amp; Jonathan</p>
       </main>
@@ -205,7 +210,6 @@ export default function InvitationPage() {
             <p>{copy.guestFor}</p>
             <strong>{invitation.name}</strong>
           </div>
-          <WeddingCountdown date={weddingDateValue} copy={copy} />
           {decision && <p className="response-saved">{decision === 'yes' ? copy.savedYes : copy.savedNo}</p>}
           {decision && <button className="text-button" onClick={() => setStage('rsvp')}>{copy.changeResponse}</button>}
           <p className="sound-copy">{copy.sound}</p>
