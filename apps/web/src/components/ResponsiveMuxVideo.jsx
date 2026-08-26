@@ -117,6 +117,7 @@ export default function ResponsiveMuxVideo({ onComplete, copy }) {
           style={{ '--controls': 'none' }}
           onLoadedMetadata={restorePlayback}
           onTimeUpdate={updateProgress}
+          onPlay={() => setPlaying(true)}
           onPlaying={() => setPlaying(true)}
           onPause={() => setPlaying(false)}
           onEnded={finishVideo}
