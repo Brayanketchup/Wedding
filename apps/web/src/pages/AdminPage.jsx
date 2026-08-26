@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from 'react'
 import { Check, Clock3, Copy, Eye, EyeOff, Heart, KeyRound, LogOut, Mail, MessageCircle, Pencil, Plus, RefreshCw, Search, Share2, Trash2, Users, X } from 'lucide-react'
 import { api } from '../lib/api'
 import BrandMark from '../components/BrandMark'
+import LoadingBar from '../components/LoadingBar'
 
 function PasswordInput(props) {
   const [visible, setVisible] = useState(false)
@@ -362,7 +363,7 @@ function Dashboard({ admin, onLogout, onAdminChange }) {
         <header className="dashboard-header">
           <div><p className="eyebrow">Wedding dashboard</p><h1>Guests</h1><p>View and manage your guests' responses.</p></div>
           <div className="dashboard-header-actions">
-            <button className="refresh-button" onClick={load} disabled={refreshing}><RefreshCw size={16} className={refreshing ? 'spin' : ''} /> Refresh</button>
+            <button className="refresh-button" onClick={load} disabled={refreshing}><RefreshCw size={16} /> Refresh</button>
             <button className="new-invitation-button" onClick={() => setCreatorOpen(true)}><Plus size={16} /> New invitation</button>
           </div>
         </header>
@@ -383,7 +384,8 @@ function Dashboard({ admin, onLogout, onAdminChange }) {
             </div>
           </div>
           {error && <div className="dashboard-error">{error} <button onClick={load}>Try again</button></div>}
-          {!error && !data && <div className="table-loading">Loading responses…</div>}
+          {!error && !data && <div className="table-loading"><LoadingBar label="Loading responses…" compact /></div>}
+          {!error && data && refreshing && <div className="table-loading table-loading--refresh"><LoadingBar label="Refreshing responses…" compact /></div>}
           {data && (
             <div className="table-scroll">
               <table>
@@ -507,7 +509,7 @@ export default function AdminPage() {
     setStatus('guest')
   }
 
-  if (status === 'loading') return <div className="admin-loading"><BrandMark /><span /></div>
+  if (status === 'loading') return <div className="admin-loading"><BrandMark /><LoadingBar label="Loading dashboard…" /></div>
   if (status === 'guest') return <Login onLogin={(value) => { setAdmin(value); setStatus('authenticated') }} />
   if (admin.mustChangePassword) return <ForcedPasswordChange admin={admin} onChanged={setAdmin} onLogout={logout} />
   return <Dashboard admin={admin} onLogout={logout} onAdminChange={setAdmin} />

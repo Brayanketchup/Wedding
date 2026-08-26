@@ -7,7 +7,7 @@ import FloralCorner from '../components/FloralCorner'
 import LanguageSwitch from '../components/LanguageSwitch'
 import LoadingScreen from '../components/LoadingScreen'
 import PrivatePage from './PrivatePage'
-import YouTubeVideo from '../components/YouTubeVideo'
+import ResponsiveMuxVideo from '../components/ResponsiveMuxVideo'
 import { invitationCopy, useInvitationLanguage } from '../lib/invitationLanguage'
 
 function formatWeddingDate(value) {
@@ -130,9 +130,12 @@ export default function InvitationPage() {
   if (stage === 'video') {
     return (
       <main className="video-page" lang={language}>
-        <LanguageSwitch language={language} onChange={setLanguage} />
-        <header className="video-header"><BrandMark light /><p>{copy.videoMessage}</p></header>
-        <YouTubeVideo onComplete={finishVideo} copy={copy} />
+        <header className="video-header">
+          <BrandMark light />
+          <p>{copy.videoMessage}</p>
+          <LanguageSwitch language={language} onChange={setLanguage} />
+        </header>
+        <ResponsiveMuxVideo onComplete={finishVideo} copy={copy} />
         <button className="skip-button" onClick={finishVideo}>{copy.skipVideo} <ArrowRight size={15} /></button>
       </main>
     )
@@ -205,7 +208,6 @@ export default function InvitationPage() {
           <p className="eyebrow">{copy.welcomeEyebrow}</p>
           <div className="names-lockup"><span>Annie</span><b>&amp;</b><span>Jonathan</span></div>
           <p className="getting-married">{copy.gettingMarried}</p>
-          <div className="date-line"><span />{weddingDate}<span /></div>
           <div className="guest-note">
             <p>{copy.guestFor}</p>
             <strong>{invitation.name}</strong>

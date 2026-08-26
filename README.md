@@ -76,16 +76,11 @@ npm run admin:reset -- admin@example.com
 
 Ambos comandos generan una contraseña temporal que se muestra una sola vez. El restablecimiento cierra todas las sesiones anteriores y exige una contraseña nueva en el siguiente inicio de sesión. Un administrador autenticado también puede cambiar su propia contraseña desde el dashboard.
 
-## Video de YouTube
+## Video de Mux
 
-Configura `VITE_YOUTUBE_VIDEO_ID` con la parte final de la URL de tu video. Por ejemplo, para `https://youtube.com/watch?v=ABC123`, usa:
+La invitación usa `@mux/mux-player-react` con dos videos públicos: uno horizontal (16:9) para pantallas de escritorio y uno vertical (9:16) para pantallas de hasta 767 px. Solo se monta un reproductor a la vez. Si la ventana cruza ese breakpoint, la app cambia de orientación e intenta conservar la posición y el estado de reproducción.
 
-```env
-VITE_YOUTUBE_VIDEO_ID=ABC123
-VITE_YOUTUBE_START_SECONDS=0
-```
-
-La experiencia reproduce 60 segundos desde el punto configurado y luego abre el RSVP. Por ejemplo, `VITE_YOUTUBE_START_SECONDS=20` reproduce desde 0:20 hasta 1:20. YouTube puede impedir autoplay hasta que exista una interacción; por eso el invitado pulsa primero **Abrir nuestra invitación**.
+Los Playback IDs públicos están definidos en `ResponsiveMuxVideo.jsx`. No se necesitan secretos ni credenciales de la API de Mux en el navegador.
 
 ## Fecha de la boda
 
@@ -133,4 +128,4 @@ Ejecuta `npm run build` y configura `NODE_ENV=production`. Después, `npm start`
 
 ### Vercel
 
-El archivo `vercel.json` construye `apps/web/dist`, envía `/api/*` a la función Express y conserva las rutas del SPA. Importa el repositorio con el directorio raíz sin modificar y configura estas variables para Production y Preview: `MONGODB_URI`, `ADMIN_EMAIL`, `ADMIN_PASSWORD`, `JWT_SECRET`, `VITE_YOUTUBE_VIDEO_ID`, `VITE_YOUTUBE_START_SECONDS`, `VITE_WEDDING_DATE` y `VITE_WEDDING_IMAGE_URL`. `PUBLIC_APP_URL` es opcional porque Vercel proporciona su dominio automáticamente; configúralo explícitamente al usar un dominio personalizado. Después de cambiar variables, crea un nuevo deployment.
+El archivo `vercel.json` construye `apps/web/dist`, envía `/api/*` a la función Express y conserva las rutas del SPA. Importa el repositorio con el directorio raíz sin modificar y configura estas variables para Production y Preview: `MONGODB_URI`, `ADMIN_EMAIL`, `ADMIN_PASSWORD`, `JWT_SECRET`, `VITE_WEDDING_DATE` y `VITE_WEDDING_IMAGE_URL`. `PUBLIC_APP_URL` es opcional porque Vercel proporciona su dominio automáticamente; configúralo explícitamente al usar un dominio personalizado. Después de cambiar variables, crea un nuevo deployment.
