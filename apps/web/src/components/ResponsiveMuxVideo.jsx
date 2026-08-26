@@ -3,7 +3,7 @@ import { Pause, Play } from 'lucide-react'
 import LoadingBar from './LoadingBar'
 
 const MuxPlayer = lazy(() => import('@mux/mux-player-react'))
-const MOBILE_VIDEO_QUERY = '(max-width: 767px)'
+const MOBILE_VIDEO_QUERY = '(orientation: portrait) and (max-width: 767px)'
 const LANDSCAPE_PLAYBACK_ID = 'Ughwzeg8zSGmAbIg1mYx2nHoe5GFOYUA2UHORDY94QY'
 const PORTRAIT_PLAYBACK_ID = 'jdQVuIz4N7qHY8Y02jZnbzz2500Ouff8PlTSCD9uX4zqM'
 
